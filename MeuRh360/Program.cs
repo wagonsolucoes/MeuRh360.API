@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,7 +52,11 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddControllers();   // ------- AT AQUI, SEMPRE ANTES DO .Build()
+builder.Services.AddControllers()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<Application.Commands.Validators.UpdateUserCommandValidator>();
+    });   // ------- AT AQUI, SEMPRE ANTES DO .Build()
 
 // Configura autentica��o JWT ANTES do builder.Build()
 var jwtSettings = builder.Configuration.GetSection("Jwt");
